@@ -1,3 +1,5 @@
+import path from "path";
+import { readFileSync } from "fs";
 import {
   Document,
   Page,
@@ -8,11 +10,26 @@ import {
 } from "@react-pdf/renderer";
 import type { Invoice } from "@/types";
 
-// Register a font that supports Korean characters
-// In production, you would host this font file yourself
+// Register Noto Sans KR TTF fonts for Korean character support.
+// Fonts are read with fs.readFileSync and embedded as base64 data URIs because:
+//   1. @react-pdf/renderer v4 uses fetch() internally for font src strings.
+//   2. On Windows, path.join() produces backslash paths that the library
+//      rejects as "Unknown font format".
+//   3. Node's fetch() does not support file:// URLs.
+// Encoding as data: URIs bypasses fetch entirely and works cross-platform.
+function fontDataUri(filename: string): string {
+  const buf = readFileSync(
+    path.join(process.cwd(), "public", "fonts", filename)
+  );
+  return `data:font/truetype;base64,${buf.toString("base64")}`;
+}
+
 Font.register({
   family: "NotoSansKR",
-  src: "https://fonts.gstatic.com/s/notosanskr/v36/PbyxFmXiEBPT4ITbgNA5Cgm20xz64px_1hVWr0wuPNGmlQNMEfD4.woff2",
+  fonts: [
+    { src: fontDataUri("NotoSansKR-Regular.ttf"), fontWeight: 400 },
+    { src: fontDataUri("NotoSansKR-Bold.ttf"), fontWeight: 700 },
+  ],
 });
 
 const styles = StyleSheet.create({

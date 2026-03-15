@@ -1,3 +1,4 @@
+// PDF generation route — uses @react-pdf/renderer with NotoSansKR font
 import { NextResponse, type NextRequest } from "next/server";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import { createElement, type ReactElement } from "react";
@@ -45,9 +46,10 @@ export async function GET(
         "Cache-Control": "no-store",
       },
     });
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { error: "PDF 생성 중 오류가 발생했습니다.", code: "UNKNOWN" } satisfies InvoiceErrorResponse,
+      { error: msg, code: "UNKNOWN" } satisfies InvoiceErrorResponse,
       { status: 500 }
     );
   }

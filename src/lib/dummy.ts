@@ -2,39 +2,39 @@
 import type { Invoice, InvoiceStatus } from "@/types/invoice";
 
 // ──────────────────────────────────────────────
-// 승인 상태 더미 견적서 (기본)
+// 대기 상태 더미 견적서 (Notion 실제 데이터 기반: INV-2025-001)
 // ──────────────────────────────────────────────
 export const DUMMY_INVOICE: Invoice = {
   id: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
-  invoiceNumber: "INV-2026-001",
-  clientName: "(주)샘플기업",
-  issueDate: "2026-03-01",
-  validUntil: "2026-03-31",
-  status: "승인",
+  invoiceNumber: "INV-2025-001",
+  clientName: "ABC 주식회사",
+  issueDate: "2025-10-07",
+  validUntil: "2026-03-17",
+  status: "대기",
   items: [
     {
       id: "11111111111111111111111111111111",
-      description: "웹사이트 기획 및 디자인",
+      description: "웹사이트 디자인",
       quantity: 1,
-      unitPrice: 1_500_000,
-      amount: 1_500_000,
+      unitPrice: 5_000_000,
+      amount: 5_000_000,
     },
     {
       id: "22222222222222222222222222222222",
-      description: "프론트엔드 개발 (Next.js)",
-      quantity: 2,
-      unitPrice: 1_200_000,
-      amount: 2_400_000,
+      description: "프론트엔드 개발",
+      quantity: 1,
+      unitPrice: 8_000_000,
+      amount: 8_000_000,
     },
     {
       id: "33333333333333333333333333333333",
-      description: "유지보수 및 기술 지원 (월)",
+      description: "유지보수 (1개월)",
       quantity: 3,
-      unitPrice: 300_000,
-      amount: 900_000,
+      unitPrice: 500_000,
+      amount: 1_500_000,
     },
   ],
-  totalAmount: 4_800_000,
+  totalAmount: 14_500_000,
 };
 
 // ──────────────────────────────────────────────

@@ -62,11 +62,11 @@ export async function getInvoiceById(pageId: string): Promise<Invoice | null> {
     | undefined;
   const validUntil = validUntilProp?.date?.start ?? "";
 
-  // Extract total amount
+  // Extract total amount (may be null — fallback to items sum below)
   const amountProp = props["총 금액"] as
     | { number: number | null }
     | undefined;
-  const totalAmount = amountProp?.number ?? 0;
+  const notionTotalAmount = amountProp?.number ?? null;
 
   // Extract status
   const statusProp = props["상태"] as
@@ -82,6 +82,12 @@ export async function getInvoiceById(pageId: string): Promise<Invoice | null> {
 
   // Fetch all item pages in parallel
   const items = await fetchInvoiceItems(notion, itemIds);
+
+  // Use Notion total if provided; otherwise sum item amounts
+  const totalAmount =
+    notionTotalAmount !== null
+      ? notionTotalAmount
+      : items.reduce((sum, item) => sum + item.amount, 0);
 
   return {
     id: page.id,
