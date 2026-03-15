@@ -2,7 +2,7 @@
 
 노션을 데이터베이스로 활용하여 견적서를 관리하고, 클라이언트가 웹에서 조회 및 PDF 다운로드할 수 있는 시스템
 
-> **마지막 업데이트**: 2026-03-15 | **현재 상태**: Phase 1, 2, 3 완료. Phase 4 진행 예정.
+> **마지막 업데이트**: 2026-03-15 | **현재 상태**: Phase 1, 2, 3, 4 완료. MVP 개발 완료.
 
 ## 개요
 
@@ -114,28 +114,27 @@
   - ✅ 실제 Notion 데이터 (INV-2025-001, ABC 주식회사) 렌더링 확인
   - ✅ PDF 폰트 버그 수정 (`@react-pdf/renderer` Windows 경로 이슈 → base64 data URI 방식)
 
-### Phase 4: 고급 기능 및 최적화
+### Phase 4: 고급 기능 및 최적화 ✅
 
-- **Task 010: 성능 최적화 및 캐싱**
-  - Next.js 캐싱 전략 구현
-  - 이미지 최적화 설정
-  - 폰트 최적화 (subset 생성)
-  - Notion API 호출 최적화
-  - React Suspense 경계 설정
+- **Task 010: 성능 최적화 및 캐싱** ✅ - 완료
+  - ✅ Notion Client 싱글톤화 (모듈 레벨 인스턴스 재사용)
+  - ✅ `unstable_cache` 적용 (`getInvoiceById`, TTL 60초)
+  - ✅ `serverExternalPackages: ["@react-pdf/renderer"]` 추가
+  - ✅ API 응답 `Cache-Control: public, s-maxage=60, stale-while-revalidate=30` 헤더 추가
 
-- **Task 011: 보안 및 에러 처리 강화**
-  - API 키 보안 검증
-  - Rate limiting 구현
-  - 상세 에러 로깅 시스템
-  - 404/500 에러 처리 개선
-  - CORS 정책 설정
+- **Task 011: 보안 및 에러 처리 강화** ✅ - 완료
+  - ✅ 구조화 에러 로거 (`src/lib/logger.ts`) 구현
+  - ✅ API 라우트 내부 에러 메시지 클라이언트 노출 제거
+  - ✅ Edge Runtime 미들웨어 (`src/middleware.ts`) — GET 외 405, 1KB 초과 413, CORS 헤더
+  - ✅ 보안 헤더 추가 (`X-Frame-Options`, `X-Content-Type-Options`, CSP 등)
+  - ✅ `NOTION_API_KEY` `secret_` 접두사 형식 검증 강화
 
-- **Task 012: 테스트 및 배포 준비**
-  - 단위 테스트 작성 (컴포넌트, 유틸리티)
-  - 통합 테스트 작성 (API, 페이지)
-  - E2E 테스트 시나리오 구현 (Playwright MCP 사용)
-  - Vercel 배포 설정
-  - 환경별 설정 관리 (dev/staging/prod)
+- **Task 012: 테스트 및 배포 준비** ✅ - 완료
+  - ✅ Vitest 설정 (`vitest.config.ts`, @testing-library/react)
+  - ✅ 유틸리티 단위 테스트 (`src/__tests__/lib/utils.test.ts`) — 13개 통과
+  - ✅ API 라우트 통합 테스트 (`src/__tests__/api/invoice.test.ts`) — 8개 통과
+  - ✅ Vercel 배포 설정 (`vercel.json`) 추가
+  - ✅ Playwright MCP 최종 E2E 테스트 통과
 
 ## 작업별 상세 구현 사항
 
@@ -303,10 +302,10 @@ graph TD
   - ✅ PDF 생성 기능 구현 완료 (Task 009)
   - ✅ 통합 테스트 완료 (Task 009-1) — 실제 Notion 데이터 검증 + PDF 폰트 버그 수정
 
-- **Week 3**: Phase 4 (Task 010-012)
-  - 성능 최적화 예정 (Task 010)
-  - 보안 강화 예정 (Task 011)
-  - 테스트/배포 준비 예정 (Task 012)
+- **Week 3**: Phase 4 (Task 010-012) ✅
+  - ✅ 성능 최적화 완료 (Task 010)
+  - ✅ 보안 강화 완료 (Task 011)
+  - ✅ 테스트/배포 준비 완료 (Task 012)
 
 ## 위험 요소 및 대응 방안
 
@@ -354,5 +353,6 @@ graph TD
 | 2026-03-15 | Phase 2 (Task 004~006) 완료. Phase 3 진행 예정. |
 | 2026-03-15 | Phase 3 (Task 007~009) 코드 완성. 에러 핸들링 E2E 테스트 통과. 실제 Notion 데이터 테스트 대기. |
 | 2026-03-15 | Phase 3 (Task 007~009-1) 완료. Phase 4 진행 예정. |
+| 2026-03-15 | Phase 4 (Task 010~012) 완료. MVP 개발 전체 완료. Vercel 배포 준비 완료. |
 
 ---

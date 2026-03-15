@@ -1,8 +1,9 @@
 import { Client, isFullPage } from "@notionhq/client";
+import { unstable_cache } from "next/cache";
 import type { Invoice, InvoiceItem, InvoiceStatus } from "@/types";
 
-// Initialize the Notion client (server-side only)
-function getNotionClient(): Client {
+// Module-level singleton — created once per Node.js process, not per request
+function createNotionClient(): Client {
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) {
     throw new Error("NOTION_API_KEY environment variable is not set");
@@ -10,11 +11,20 @@ function getNotionClient(): Client {
   return new Client({ auth: apiKey });
 }
 
+let _notionClient: Client | null = null;
+
+function getNotionClient(): Client {
+  if (!_notionClient) {
+    _notionClient = createNotionClient();
+  }
+  return _notionClient;
+}
+
 /**
- * Fetch an invoice page from Notion by page ID.
- * Returns null if the page does not exist.
+ * Internal fetch — reads from Notion without caching.
+ * Called only through the cached wrapper below.
  */
-export async function getInvoiceById(pageId: string): Promise<Invoice | null> {
+async function fetchInvoiceById(pageId: string): Promise<Invoice | null> {
   const notion = getNotionClient();
 
   let page;
@@ -100,6 +110,17 @@ export async function getInvoiceById(pageId: string): Promise<Invoice | null> {
     status,
   };
 }
+
+/**
+ * Fetch an invoice page from Notion by page ID.
+ * Results are cached for 60 seconds via Next.js Data Cache.
+ * Returns null if the page does not exist.
+ */
+export const getInvoiceById = unstable_cache(
+  fetchInvoiceById,
+  ["invoice-by-id"],
+  { revalidate: 60 }
+);
 
 /**
  * Fetch invoice line items from their Notion pages.

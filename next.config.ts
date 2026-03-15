@@ -29,10 +29,27 @@ const nextConfig: NextConfig = {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
           },
+          {
+            key: "Content-Security-Policy",
+            // unsafe-inline is required for Next.js hydration scripts
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data:",
+              "connect-src 'self'",
+              "object-src 'none'",
+              "frame-ancestors 'none'",
+            ].join("; "),
+          },
         ],
       },
     ];
   },
+
+  // Packages that must run in Node.js (not bundled for the Edge runtime)
+  serverExternalPackages: ["@react-pdf/renderer"],
 
   // Experimental features for Next.js 15
   experimental: {

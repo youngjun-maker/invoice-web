@@ -5,6 +5,7 @@ import { createElement, type ReactElement } from "react";
 import { InvoicePDF } from "@/components/invoice/invoice-pdf";
 import { isValidNotionId } from "@/lib/utils";
 import { getInvoiceById } from "@/lib/notion";
+import { logger } from "@/lib/logger";
 import type { InvoiceErrorResponse } from "@/types";
 
 export async function GET(
@@ -47,9 +48,12 @@ export async function GET(
       },
     });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    logger.error("PDF generation failed", {
+      invoiceId: id,
+      error: err instanceof Error ? err.message : String(err),
+    });
     return NextResponse.json(
-      { error: msg, code: "UNKNOWN" } satisfies InvoiceErrorResponse,
+      { error: "Internal server error", code: "UNKNOWN" } satisfies InvoiceErrorResponse,
       { status: 500 }
     );
   }
