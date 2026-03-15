@@ -6,7 +6,10 @@ const serverEnvSchema = z.object({
   NOTION_API_KEY: z
     .string()
     .min(1, "NOTION_API_KEY is required")
-    .startsWith("secret_", "NOTION_API_KEY must start with 'secret_'"),
+    .refine(
+      (val) => val.startsWith("secret_") || val.startsWith("ntn_"),
+      "NOTION_API_KEY must start with 'secret_' or 'ntn_'"
+    ),
   NOTION_DATABASE_ID: z.string().min(1, "NOTION_DATABASE_ID is required"),
   NODE_ENV: z
     .enum(["development", "test", "production"])
